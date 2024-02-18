@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stopwatch</title>
+  <style>
+    .stopwatch {
+      text-align: center;
+      margin-top: 50px;
+    }
+
+    #display {
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="stopwatch">
+    <div id="display">00:00:00</div>
+    <button id="startStop" onclick="startStop()">Start</button>
+    <button id="lapReset" onclick="lapReset()">Reset</button>
+    <button id="lap" onclick="lap()">Lap</button>
+    <ul id="laps"></ul>
+  </div>
+
+  <script>
+    let startTime;
+    let running = false;
+    let timerInterval;
+
+    function startStop() {
+      if (running) {
+        clearInterval(timerInterval);
+        document.getElementById("startStop").innerText = "Start";
+      } else {
+        startTime = Date.now() - pausedTime;
+        timerInterval = setInterval(updateDisplay, 10);
+        document.getElementById("startStop").innerText = "Stop";
+      }
+      running = !running;
+    }
+
+    function updateDisplay() {
+      let elapsedTime = Date.now() - startTime;
+      let formattedTime = new Date(elapsedTime).toISOString().substr(11, 8);
+      document.getElementById("display").innerText = formattedTime;
+    }
+
+    let pausedTime = 0;
+
+    function lapReset() {
+      if (running) {
+        lap();
+      }
+      pausedTime = 0;
+      document.getElementById("display").innerText = "00:00:00";
+      document.getElementById("laps").innerHTML = "";
+    }
+
+    function lap() {
+      let elapsedTime = Date.now() - startTime;
+      let formattedTime = new Date(elapsedTime - pausedTime).toISOString().substr(11, 8);
+      pausedTime += elapsedTime;
+      let lapItem = document.createElement("li");
+      lapItem.innerText = formattedTime;
+      document.getElementById("laps").appendChild(lapItem);
+    }
+  </script>
+</body>
+</html> 
